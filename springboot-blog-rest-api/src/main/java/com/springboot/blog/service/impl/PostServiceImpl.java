@@ -5,8 +5,10 @@ import com.springboot.blog.exception.ResourceNotFoundException;
 import com.springboot.blog.payload.PostDTO;
 import com.springboot.blog.repository.PostRepository;
 import com.springboot.blog.service.PostService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,8 +19,10 @@ public class PostServiceImpl implements PostService {
     //Constructor based dependency injection
     private PostRepository postRepository;
 
+    private ModelMapper mapper;
     @Autowired
-    public PostServiceImpl(PostRepository postRepository){
+    public PostServiceImpl(PostRepository postRepository, ModelMapper mapper){
+        this.mapper = mapper;
         this.postRepository = postRepository;
     }
 
@@ -66,21 +70,13 @@ public class PostServiceImpl implements PostService {
 
     //convert DTO to entity
     private Post mapToEntity(PostDTO postDTO){
-        Post post = new Post();
-        post.setId(postDTO.getId());
-        post.setTitle(postDTO.getTitle());
-        post.setDescription(postDTO.getDescription());
-        post.setContent(postDTO.getContent());
+        Post post = mapper.map(postDTO, Post.class);
         return post;
     }
 
     //convert entity to DTO
     private PostDTO mapToDTO(Post post){
-        PostDTO postDTO = new PostDTO();
-        postDTO.setId(post.getId());
-        postDTO.setTitle(post.getTitle());
-        postDTO.setDescription(post.getDescription());
-        postDTO.setContent(post.getContent());
+        PostDTO postDTO = mapper.map(post,PostDTO.class);
         return postDTO;
     }
 }
